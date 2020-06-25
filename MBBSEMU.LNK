@@ -1,0 +1,13 @@
+\run286\bc3\lib\c0phdll  +
+\run286\bc4\lib\fpdmy    +
+\wgserv\phobj\mbbsmain   +
+\wgserv\phobj\submod     +
+\wgserv\phobj\topmenu    +
+\wgserv\phobj\echo       +
+\wgserv\phobj\timer      +
+\wgserv\phobj\fsedit     +
+\wgserv\phobj\fsdata
+\wgserv\mbbsemu
+nul
+phapi mathh galimp msgimp gsblimp /Twd /s /n
+\wgserv\dlib\mathdef.def

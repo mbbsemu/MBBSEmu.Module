@@ -49,5 +49,8 @@ Computer system:  [33m?????????????[32m  ANSI-[33m????[32m
            Born:  [33m????????[32m
             Sex:  [33m??????[32m
        Password:  [33m?????????[32m
-} T User Information Editing - for ANSI users
+
+           Exit:  [37m????[32m  [0;32m(select SAVE or QUIT and press ENTER)[1m
+
+       [31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!![32m} T User Information Editing - for ANSI users
 

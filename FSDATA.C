@@ -40,7 +40,8 @@ EDITORPREF=%s%c\
 PAUSEOUT=%s%c\
 BIRTHDAY=%s%c\
 SEX=%s%c\
-PASSWORD=%s%c";               
+PASSWORD=%s%c\
+DONE=%s%c";
 
 static int onVerifyField(int fieldNumber, char *answer) {
   return vfyadn(fieldNumber, answer);
@@ -113,7 +114,8 @@ static void loadDefaults(char *buffer) {
     "PAUSE", 0,
     "01/01/1979", 0,
     "MALE", 0,
-    "secret", 0);
+    "secret", 0,
+    "", 0);
 }
 
 static int fullScreenDataEntryHandler() {

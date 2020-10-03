@@ -9,9 +9,12 @@ extern int moduleState;
 // Pointer to our MCV file
 extern FILE *mcv;
 
+extern BTVFILE *bdb;
+
 #define ACCOUNT_LOG "MBBSEmu"
 #define LOG(s) shocst(ACCOUNT_LOG, s)
 #define LOG1(s, a) do { char buf[128]; sprintf(buf, s, a); LOG(buf); } while (0)
+#define LOG2(s, a, b) do { char buf[128]; sprintf(buf, s, a, b); LOG(buf); } while (0)
 #define USR_LOG(s) do { prf(s); outprf(usrnum); } while (0)
 #define USR_LOG1(fmt, a) do { prf(fmt, a); outprf(usrnum); } while (0)
 #define USR_LOG2(fmt, a, b) do { prf(fmt, a, b); outprf(usrnum); } while (0)

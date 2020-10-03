@@ -14,8 +14,8 @@ Online user manual:
 DLLs: MBBSEMU
 MSGs: MBBSEMU
 
-Btrieve page size:    2048
-Btrieve files:        0
+Btrieve page size:    512
+Btrieve files:        1
 
 Cleanup:
 

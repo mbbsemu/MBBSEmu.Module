@@ -79,6 +79,8 @@ static void processResults(int saved) {
 }
 
 static void onDoneEditing(int saved) {
+  LOG1("substt value coming out is %d", usrptr->substt);
+
   // full screen editing wipes our state, restore it
   usrptr->state = moduleState;
   usrptr->substt = 1;
@@ -121,6 +123,8 @@ static void loadDefaults(char *buffer) {
 static int fullScreenDataEntryHandler() {
   UserData *userData = getUserData();
   char answers[512];
+
+  LOG1("substt value entering is %d", usrptr->substt);
 
   loadDefaults(answers);
         

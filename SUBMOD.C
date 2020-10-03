@@ -6,6 +6,11 @@
 static SubModule handlers[SUBMODULE_LAST_INDEX];
 
 void registerSubModule(int index, SubModule *subModule) {
+  if (subModule->flags & NO_DEFAULT_INPUT_PROCESSING && 
+    subModule->onInput == NULL) {
+    catastro("must set onInput if NO_DEFAULT_INPUT_PROCESSING set");
+  }
+
   handlers[index] = *subModule;
 }
 

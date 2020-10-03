@@ -11,5 +11,7 @@ copy fsdata*.* a:\src
 copy fsedit*.* a:\src
 copy submod*.* a:\src
 copy globals.h a:\src
+copy float*.* a:\src
+copy btrieve*.* a:\src
 copy floppy.bat a:\src
 copy mbbsmain.c a:\src

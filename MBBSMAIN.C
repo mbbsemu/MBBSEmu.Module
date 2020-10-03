@@ -6,35 +6,48 @@
 #include "submod.h"
 #include "topmenu.h"
 #include "echo.h"
+#include "float.h"
 #include "timer.h"
 #include "fsedit.h"
 #include "fsdata.h"
+#include "btrieve.h"
 
 // Globals
 int moduleState;
 FILE *mcv = NULL;
+BTVFILE* bdb = NULL;
 
 static int initializeUserData() {
   memset(getUserData(), 0, sizeof(UserData));
-
+  
   return pushSubModule(SUBMODULE_TOPMENU);
 }
 
+static void cleanupUserData() {
+  
+}
+
 static int sttrou() {
+  int doDefaultInputProcessing = 1;
   int ret = 1;
   SubModule* subModule;
   
   setmbk(mcv);
+  setbtv(bdb);
 
   if (usrptr->substt == 0) {
     usrptr->substt = 1;
     ret = initializeUserData();
   } else {
     // user has entered marc, margv
-    if (margc == 1 && strcmp(margv[0], "x") == 0) {
+    subModule = getSubModule();
+    doDefaultInputProcessing = 
+      subModule == NULL || 
+      ((subModule->flags & NO_DEFAULT_INPUT_PROCESSING) == 0);
+
+    if (doDefaultInputProcessing && margc == 1 && strcmp(margv[0], "x") == 0) {
       ret = popSubModule();
     } else { 
-      subModule = getSubModule();
       if (subModule->onInput != NULL) {
         ret = subModule->onInput();
       }
@@ -42,7 +55,13 @@ static int sttrou() {
   }
 
   rstmbk();
+  rstbtv();
+
   outprf(usrnum);
+
+  if (ret == 0) {
+    cleanupUserData();
+  }
   return ret; // return 0 to exit module
 };
 
@@ -66,6 +85,8 @@ static void initSubModules() {
   initTimerSubModule();
   initFullScreenEditorSubModule();
   initFullScreenDataSubModule();
+  initFloatSubModule();
+  initBtrieveSubModule();
 }
 
 void EXPORT init__mbbsemu() {
@@ -77,11 +98,14 @@ void EXPORT init__mbbsemu() {
   
   mcv = opnmsg("MBBSEMU.MCV");
 
+  bdb = opnbtv("MBBSEMU.DAT", sizeof(DBRECORD));
+
   // allocate memory per user
   dclvda(sizeof(UserData));
 
   setmbk(mcv); // pushes
   LOG(getmsg(STARTUP));
+  
   rstmbk();  // pops
 };
 
@@ -89,6 +113,11 @@ static void exit_routine() {
   if (mcv != NULL) {
     clsmsg(mcv);
     mcv = NULL;
+  }
+
+  if (bdb != NULL) {
+    clsbtv(bdb);
+    bdb = NULL;
   }
 
   shocst(ACCOUNT_LOG, "Shutting down");

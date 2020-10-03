@@ -4,9 +4,11 @@
 \wgserv\phobj\submod     +
 \wgserv\phobj\topmenu    +
 \wgserv\phobj\echo       +
+\wgserv\phobj\float      +
 \wgserv\phobj\timer      +
 \wgserv\phobj\fsedit     +
-\wgserv\phobj\fsdata
+\wgserv\phobj\fsdata     +
+\wgserv\phobj\btrieve
 \wgserv\mbbsemu
 nul
 phapi mathh galimp msgimp gsblimp /Twd /s /n

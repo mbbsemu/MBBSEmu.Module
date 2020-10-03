@@ -16,14 +16,18 @@ static int topMenuInputHandler() {
   }
 
   if (margc == 1) {
-    if (!strcmp(margv[0], "e") || !strcmp(margv[0], "E")) {
+    if (sameas(margv[0], "e")) {
       return pushSubModule(SUBMODULE_ECHO);
-    } else if (!strcmp(margv[0], "t") || !strcmp(margv[0], "T")) {
+    } else if (sameas(margv[0], "t")) {
       return pushSubModule(SUBMODULE_TIMING);
-    } else if (!strcmp(margv[0], "f") || !strcmp(margv[0], "F")) {
+    } else if (sameas(margv[0], "f")) {
       return pushSubModule(SUBMODULE_FULL_SCREEN_EDIT);
-    } else if (!strcmp(margv[0], "d") || !strcmp(margv[0], "D")) {
+    } else if (sameas(margv[0], "d")) {
       return pushSubModule(SUBMODULE_FULL_SCREEN_DATA);
+    } else if (sameas(margv[0], "s")) {
+      return pushSubModule(SUBMODULE_FLOAT);
+    } else if (sameas(margv[0], "B")) {
+      return pushSubModule(SUBMODULE_BTRIEVE);
     }
   }
   return 1;

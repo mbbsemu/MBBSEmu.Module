@@ -23,13 +23,23 @@
 #define STATE_DELETE_ID 10
 #define STATE_DELETE_STRING 11
 
+static unsigned long hash(const char *value) {
+  unsigned long hash = 7;
+  const char *c;
+
+  for (c = value; *c; ++c) {
+    hash = hash * 31 + *c;    
+  }
+  return hash;
+}
+
 static void ladd(long value) {
   DBRECORD dbRecord;
   memset(&dbRecord, 0, sizeof(dbRecord));
 
   strcpy(dbRecord.userid, usaptr->userid);
   dbRecord.lvalue = value;
-  strcpy(dbRecord.svalue, ltoa(hrtval()));
+  strcpy(dbRecord.svalue, ltoa(value));
 
   if (!dinsbtv(&dbRecord)) {
     prfmsg(INSFAIL);
@@ -41,7 +51,7 @@ static void sadd(const char *value) {
   memset(&dbRecord, 0, sizeof(dbRecord));
 
   strcpy(dbRecord.userid, usaptr->userid);
-  dbRecord.lvalue = hrtval();
+  dbRecord.lvalue = hash(value);
   strcpy(dbRecord.svalue, value);
 
   if (!dinsbtv(&dbRecord)) {

@@ -61,6 +61,7 @@ static void sadd(const char *value) {
 
 static void dumpRecords() {
   char value[16];
+  char inc[16];
   DBRECORD dbRecord;
 
   prfmsg(DBPRINT);
@@ -70,8 +71,9 @@ static void dumpRecords() {
   if (slobtv(&dbRecord)) {
     do {
       strcpy(value, ltoa(dbRecord.lvalue));
+      strcpy(inc, ltoa(dbRecord.autovalue));
 
-      prfmsg(DBVPRINT, dbRecord.userid, value, dbRecord.svalue);
+      prfmsg(DBVPRINT, dbRecord.userid, value, dbRecord.svalue, inc);
 
       memset(&dbRecord, 0, sizeof(dbRecord));
     } while (snxbtv((char*) &dbRecord));

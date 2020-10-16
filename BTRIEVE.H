@@ -8,6 +8,7 @@ typedef struct {
   char userid[32];   
   long lvalue;       
   char svalue[32];   
+  long autovalue;
 } DBRECORD, *LPDBRECORD;
 
 #endif

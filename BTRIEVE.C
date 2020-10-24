@@ -158,41 +158,49 @@ static void setQuery(int digit) {
   pData->verifyData = pData->verifyKey = 1;
   
   switch (digit) {
+    case 1:
     case '1': // physical
       pData->queryFunc = mbbs_slobtv;
       pData->acquireFunc = NULL;
       pData->nextFunc = mbbs_snxbtv;
       break;
+    case 2:
     case '2': // equal 
       pData->queryFunc = mbbs_qeqbtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 3:
     case '3': // greater
       pData->queryFunc = mbbs_qgtbtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 4:
     case '4': // greater or equal
       pData->queryFunc = mbbs_qgebtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 5:
     case '5': // less than
       pData->queryFunc = mbbs_qltbtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 6:
     case '6': // less than or equal
       pData->queryFunc = mbbs_qlebtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 7:
     case '7': // lowest
       pData->queryFunc = mbbs_qlobtv;
       pData->acquireFunc = mbbs_gcrbtv;
       pData->nextFunc = mbbs_qnxbtv;
       break;
+    case 8:
     case '8': // highest
       pData->queryFunc = mbbs_qhibtv;
       pData->acquireFunc = mbbs_gcrbtv;
@@ -205,6 +213,7 @@ static int btrieveEntryHandler() {
   memset(&getUserData()->btrieveData, 0, sizeof(BtrieveData));
 
   setState(STATE_TOP);
+  setQuery(1); // physical default
   return 1;
 }
 

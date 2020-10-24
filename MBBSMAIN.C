@@ -122,4 +122,3 @@ static void exit_routine() {
 
   shocst(ACCOUNT_LOG, "Shutting down");
 }
-

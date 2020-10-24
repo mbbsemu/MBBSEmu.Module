@@ -32,10 +32,28 @@ typedef struct _StateData {
   int stack[8];
 } StateData;
 
+typedef int (*QueryFunc)(char *,char*, int);
+typedef void (*AcquireFunc)(char *, int);
+typedef int (*NextFunc)(char *);
+
+typedef struct _BtrieveData
+{
+  int keyNumber;
+  char keyData[32];
+
+  int verifyData;
+  int verifyKey;
+
+  QueryFunc queryFunc;
+  AcquireFunc acquireFunc;
+  NextFunc nextFunc;
+} BtrieveData;
+
 // This data is stored inside vda memory on a per-user basis
 typedef struct _UserData {
   StateData stateData;
   FullScreenEditorData fullScreenEditorData;
+  BtrieveData btrieveData;
 } UserData;
 
 #define getUserData() ((UserData*) vdaptr)

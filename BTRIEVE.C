@@ -23,6 +23,10 @@
 #define STATE_DELETE_ID 10
 #define STATE_DELETE_STRING 11
 
+#define STATE_KEY_NUMBER 12
+#define STATE_KEY_INT 13
+#define STATE_KEY_STRING 14
+
 static unsigned long hash(const char *value) {
   unsigned long hash = 7;
   const char *c;
@@ -59,24 +63,65 @@ static void sadd(const char *value) {
   }
 }
 
-static void dumpRecords() {
+static int mbbs_qeqbtv(char *rec, char *b, int c) { return qeqbtv(b, c); }
+static int mbbs_qgtbtv(char *rec, char *b, int c) { return qgtbtv(b, c); }
+static int mbbs_qgebtv(char *rec, char *b, int c) { return qgebtv(b, c); }
+static int mbbs_qltbtv(char *rec, char *b, int c) { return qltbtv(b, c); }
+static int mbbs_qlebtv(char *rec, char *b, int c) { return qlebtv(b, c); }
+static int mbbs_qlobtv(char *rec, char *b, int c) { return qlobtv(c); }
+static int mbbs_qhibtv(char *rec, char *b, int c) { return qhibtv(c); }
+
+static void mbbs_gcrbtv(char *a, int b) { gcrbtv(a, b); }
+static int mbbs_qnxbtv(char *rec) { return qnxbtv(); }
+
+static int mbbs_slobtv(char *rec, char *a, int b) { return slobtv(rec); }
+static int mbbs_snxbtv(char *rec) { return snxbtv(rec); }
+
+typedef struct _KEY {
+  int offset;
+  int length;
+} KEY;
+
+static const KEY keys[] = { {2, 32}, {34, 4}, {38, 32}, {70, 4} };
+
+static void dumpRecords()
+{
   char value[16];
   char inc[16];
+  BtrieveData *pData = &getUserData()->btrieveData;
+  int keylen = keys[pData->keyNumber].length;
   DBRECORD dbRecord;
-
-  prfmsg(DBPRINT);
+  char *keyInRecord = ((char*)&dbRecord) + keys[pData->keyNumber].offset;
+ 
+  prfmsg(DBPRINT, pData->keyNumber, keylen);
 
   memset(&dbRecord, 0, sizeof(dbRecord));
   
-  if (slobtv(&dbRecord)) {
+  if (pData->queryFunc((char*)&dbRecord, pData->keyData, pData->keyNumber)) {
     do {
+      if (pData->acquireFunc) {
+        char buf[32];
+
+        pData->acquireFunc((char*)&dbRecord, pData->keyNumber);
+        pData->acquireFunc(NULL, pData->keyNumber);
+
+        if (pData->verifyData && memcmp(&dbRecord, bdb->data, sizeof(dbRecord))) 
+          catastro("bdb->data differs from dbRecord");
+
+        memcpy(buf, keyInRecord, keylen);
+        if (pData->verifyKey && memcmp(buf, bdb->key, keylen))
+          catastro("bdb->key differs from dbRecord");
+        if (pData->verifyKey && bdb->lastkn != pData->keyNumber)
+          catastro("bdb->lastkn != keynum");
+      }
+    
       strcpy(value, ltoa(dbRecord.lvalue));
       strcpy(inc, ltoa(dbRecord.autovalue));
 
       prfmsg(DBVPRINT, dbRecord.userid, value, dbRecord.svalue, inc);
 
       memset(&dbRecord, 0, sizeof(dbRecord));
-    } while (snxbtv((char*) &dbRecord));
+    } while (pData->nextFunc((char*)&dbRecord));
   }
    
   prfmsg(DBPRINTE);
@@ -108,7 +153,57 @@ static void setState(int state) {
   }
 }
 
+static void setQuery(int digit) {
+  BtrieveData *pData = &getUserData()->btrieveData;
+  pData->verifyData = pData->verifyKey = 1;
+  
+  switch (digit) {
+    case '1': // physical
+      pData->queryFunc = mbbs_slobtv;
+      pData->acquireFunc = NULL;
+      pData->nextFunc = mbbs_snxbtv;
+      break;
+    case '2': // equal 
+      pData->queryFunc = mbbs_qeqbtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '3': // greater
+      pData->queryFunc = mbbs_qgtbtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '4': // greater or equal
+      pData->queryFunc = mbbs_qgebtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '5': // less than
+      pData->queryFunc = mbbs_qltbtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '6': // less than or equal
+      pData->queryFunc = mbbs_qlebtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '7': // lowest
+      pData->queryFunc = mbbs_qlobtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+    case '8': // highest
+      pData->queryFunc = mbbs_qhibtv;
+      pData->acquireFunc = mbbs_gcrbtv;
+      pData->nextFunc = mbbs_qnxbtv;
+      break;
+  }
+}
+
 static int btrieveEntryHandler() { 
+  memset(&getUserData()->btrieveData, 0, sizeof(BtrieveData));
+
   setState(STATE_TOP);
   return 1;
 }
@@ -119,6 +214,8 @@ static void btrieveExitHandler() {
 
 static int btrieveInputHandler() {
   char c;
+  long l;
+  char *s;
   
   do {
     bgncnc();
@@ -134,9 +231,39 @@ static int btrieveInputHandler() {
         } else if (c == 'X') {
           cncall();
           popSubModule();
+        } else if (isdigit(c)) {
+          setQuery(c);
+          prfmsg(BMENU);
+        } else if (c == 'K') {
+          setState(STATE_KEY_NUMBER);
+        } else if (c == 'I') {
+          setState(STATE_KEY_INT);
+        } else if (c == 'S') {
+          setState(STATE_KEY_STRING);
         } else {
           prfmsg(BMENU);
         }
+        break;
+      case STATE_KEY_INT:
+        l = cnclon();
+        memset(getUserData()->btrieveData.keyData, 0, 32);
+        memcpy(getUserData()->btrieveData.keyData, &l, sizeof(long));
+
+        setState(STATE_TOP);
+        break;
+      case STATE_KEY_NUMBER:
+        getUserData()->btrieveData.keyNumber = cncint();
+        
+        setState(STATE_TOP);
+        break;
+      case STATE_KEY_STRING:
+        s = cncwrd();
+        if (s) {
+          memset(getUserData()->btrieveData.keyData, 0, 32);
+          strcpy(getUserData()->btrieveData.keyData, s);
+        }
+
+        setState(STATE_TOP);
         break;
       case STATE_ADD:
         c = cncchr();

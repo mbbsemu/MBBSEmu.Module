@@ -9,8 +9,9 @@
 #define SUBMODULE_FULL_SCREEN_DATA 5
 #define SUBMODULE_FLOAT 6
 #define SUBMODULE_BTRIEVE 7
+#define SUBMODULE_OUTPUT 8
 // last one 
-#define SUBMODULE_LAST_INDEX 8
+#define SUBMODULE_LAST_INDEX 9
 
 int pushSubModule(int newSubModule);
 int popSubModule(); 

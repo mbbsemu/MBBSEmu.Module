@@ -7,7 +7,7 @@
 .path.msg=c:\wgserv
 .path.obj=c:\wgserv\phobj
 
-mbbsemu.dll : mbbsmain.obj submod.obj topmenu.obj float.obj echo.obj timer.obj fsdata.obj fsedit.obj btrieve.obj \wgserv\dlib\galimp.lib \run286\bc3\lib\phapi.lib
+mbbsemu.dll : mbbsmain.obj submod.obj topmenu.obj float.obj echo.obj timer.obj fsdata.obj fsedit.obj btrieve.obj output.obj \wgserv\dlib\galimp.lib \run286\bc3\lib\phapi.lib
         ltdll mbbsemu
 
 btrieve.obj : btrieve.c submod.h mbbsemu.h
@@ -25,6 +25,9 @@ timer.obj : timer.c timer.h globals.h submod.h mbbsemu.h
 echo.obj : echo.c echo.h submod.h mbbsemu.h
         ctdll echo
 
+output.obj : output.c output.h submod.h mbbsemu.h
+        ctdll output
+
 submod.obj : submod.c submod.h globals.h
         ctdll submod
 
@@ -34,10 +37,12 @@ float.obj : float.c submod.h
 topmenu.obj : topmenu.c topmenu.h submod.h mbbsemu.h
         ctdll topmenu
 
-mbbsmain.obj : mbbsmain.c mbbsemu.h submod.h globals.h topmenu.h float.h echo.h timer.h fsdata.h fsedit.h btrieve.h
+mbbsmain.obj : mbbsmain.c mbbsemu.h submod.h globals.h topmenu.h float.h echo.h output.h timer.h fsdata.h fsedit.h btrieve.h
         ctdll mbbsmain
 
 mbbsemu.h: mbbsemu.msg
+        copy mbbsemu.msg c:\wgserv
         cd c:\WGSERV
         bbsmsx mbbsemu.msg -osrc
+        copy mbbsemu.h c:\WGSERV\SRC
         cd c:\WGSERV\SRC

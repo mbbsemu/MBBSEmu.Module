@@ -28,6 +28,8 @@ static int topMenuInputHandler() {
       return pushSubModule(SUBMODULE_FLOAT);
     } else if (sameas(margv[0], "B")) {
       return pushSubModule(SUBMODULE_BTRIEVE);
+    } else if (sameas(margv[0], "o")) {
+      return pushSubModule(SUBMODULE_OUTPUT);
     }
   }
   return 1;

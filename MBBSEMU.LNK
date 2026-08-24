@@ -8,7 +8,8 @@
 \wgserv\phobj\timer      +
 \wgserv\phobj\fsedit     +
 \wgserv\phobj\fsdata     +
-\wgserv\phobj\btrieve
+\wgserv\phobj\btrieve    +
+\wgserv\phobj\output
 \wgserv\mbbsemu
 nul
 phapi mathh galimp msgimp gsblimp /Twd /s /n

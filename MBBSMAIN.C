@@ -11,6 +11,7 @@
 #include "fsedit.h"
 #include "fsdata.h"
 #include "btrieve.h"
+#include "output.h"
 
 // Globals
 int moduleState;
@@ -87,6 +88,7 @@ static void initSubModules() {
   initFullScreenDataSubModule();
   initFloatSubModule();
   initBtrieveSubModule();
+  initOutputSubModule();
 }
 
 void EXPORT init__mbbsemu() {
